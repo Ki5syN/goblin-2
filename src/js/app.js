@@ -1,73 +1,106 @@
 export default class Game {
+	static FIELD_SIZE = 16;
+	static MAX_MISSES = 5;
+	static MOVE_INTERVAL = 1000;
+	static CURSOR_TIMEOUT = 500;
+
 	constructor() {
-		this.stay = 0;
-		this.newsInterval = 0;
+		this.currentPosition = 0;
+		this.moveIntervalId = 0
+		this.miss = 0;
+		this.score = 0;	
+		
+		this.isGameOver = false;
+
 		this.element = document.createElement('img')
 		this.element.src = './image/goblin.png';
-		this.maxMiss = 5;
-		this.moveInterval = 1000;
-		this.miss = 0;
-		this.score = 0;		
+
+		this.mouseEnterHandler = this.mouseEnter.bind(this);
+		this.onClick = this.click.bind(this);
+		this.beforeUnloadHandler = this.handleBeforeUnload.bind(this);
 	}
 
-	click(){		
+	click(){
+		if (this.isGameOver) return;		
+
 		this.element.remove();
 		this.miss = -1;				 
 
 	}
 
-	randomNumber() {
-		const fieldSize = 16;
+	mouseEnter() {
+		document.body.style.cursor =  "url('./image/icons.png'), pointer";
 
-		let numberBox = Math.floor(Math.random() * fieldSize) + 1;
+		setTimeout(() => {
+			document.body.style.cursor = 'default';
+		},Game.CURSOR_TIMEOUT)
+
+	}
+
+	handlerBeforeUnload() {
+		this.endGame()
+	}
+
+	randomNumber() {
+		let numberBox = Math.floor(Math.random() * Game.FIELD_SIZE) + 1;
 		return numberBox;
 	}
 
 	moving() {
-		let boxs = document.querySelectorAll('.box')
-		if (boxs.length === 0) {
+		if (this.isGameOver) return;
+
+		let boxes = document.querySelectorAll('.box')
+		if (boxes.length === 0) {
 			throw new Error('Игровое поле не найдено');
 		}
 
 		let moveToBox = this.randomNumber()
 
-		while (this.stay === moveToBox) {
+		while (this.currentPosition === moveToBox) {
 			moveToBox = this.randomNumber()
 		}
 
-		boxs.forEach(el => {
+		boxes.forEach(el => {
 			let id = Number(el.dataset.id)
 
 			if (id === moveToBox) {
 				el.append(this.element)
-				this.stay = moveToBox
+				this.currentPosition = moveToBox
 			}
 		})
 	}	
+
 	
 
 	startGame() {
+		this.isGameOver = false;
 
-		this.element.addEventListener('mouseenter', () => {
-			document.body.style.cursor =  "url('./image/icons.png'), pointer";
+		this.element.addEventListener('mouseenter', this.mouseEnterHandler)
 
-			setTimeout(() => {
-				document.body.style.cursor = 'default';
-			},500)
-		})
-
-		this.element.addEventListener("click", () => {
-			this.click()			
-		});			
+		this.element.addEventListener("click", this.onClick);			
 		
-		this.newsInterval = setInterval(() => {
+		this.moveIntervalId = setInterval(() => {
 			this.moving();
 			this.miss ++;
-			if (this.miss > this.maxMiss) clearInterval(this.newsInterval);
-		}, this.moveInterval);
+			if (this.miss > Game.MAX_MISSES) clearInterval(this.moveIntervalId);
+		}, Game.MOVE_INTERVAL);
+		
 
-		window.addEventListener("beforeunload", () => {
-			clearInterval(this.newsInterval);
-		});
+		window.addEventListener("beforeunload", this.beforeUnloadHandler);
 	}
+
+	endGame() {
+		if(this.isGameOver) return;
+
+		this.isGameOver = true;
+
+		clearInterval(this.moveIntervalId);
+
+		this.element.removeEventListener('mouseenter', this.mouseEnterHandler);
+		this.element.removeEventListener("click", this.onClick);
+		window.removeEventListener("beforeunload", this.beforeUnloadHandler);
+
+		this.element.remove();
+	}
+	
 }
