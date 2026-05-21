@@ -6,9 +6,7 @@ const HtmlWebPackPlugin = require('html-webpack-plugin');
 module.exports = {
   mode: 'development', 
 
-  entry: './src/index.js', 
-
-  publicPath: '/goblin-2/',
+  entry: './src/index.js',   
   
   output: {
     filename: 'main.js',
