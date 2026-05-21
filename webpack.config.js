@@ -7,9 +7,14 @@ module.exports = {
   mode: 'development', 
 
   entry: './src/index.js', 
+
+  publicPath: '/goblin-2/',
   
   output: {
+    filename: 'main.js',
     path: path.resolve(__dirname, 'dist'),
+    clean: true,
+    publicPath: '/goblin-2/',
   },
 
   module: {
