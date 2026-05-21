@@ -41,7 +41,7 @@ export default class Game {
 		this.endGame()
 	}
 
-	randomNumber() {
+	static randomNumber() {
 		let numberBox = Math.floor(Math.random() * Game.FIELD_SIZE) + 1;
 		return numberBox;
 	}

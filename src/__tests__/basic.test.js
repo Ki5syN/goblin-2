@@ -2,8 +2,8 @@
 import Game from '../js/app';
 
 test('randomNumber', () => {
-  const newGame = new Game
-  const result = newGame.randomNumber();
+
+  const result = Game.randomNumber();
     
   expect(result).toBeLessThanOrEqual(Game.FIELD_SIZE);
 });
