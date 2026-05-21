@@ -13,11 +13,11 @@ export default class Game {
 		this.isGameOver = false;
 
 		this.element = document.createElement('img')
-		this.element.src = './image/goblin.png';
+		this.element.src ='./image/goblin.png';
 
 		this.mouseEnterHandler = this.mouseEnter.bind(this);
 		this.onClick = this.click.bind(this);
-		this.beforeUnloadHandler = this.handleBeforeUnload.bind(this);
+		this.beforeUnloadHandler = this.handlerBeforeUnload.bind(this);
 	}
 
 	click(){
@@ -42,7 +42,7 @@ export default class Game {
 	}
 
 	static randomNumber() {
-		let numberBox = Math.floor(Math.random() * Game.FIELD_SIZE) + 1;
+		let numberBox = Math.floor(Math.random() * Game.FIELD_SIZE);
 		return numberBox;
 	}
 
@@ -54,10 +54,10 @@ export default class Game {
 			throw new Error('Игровое поле не найдено');
 		}
 
-		let moveToBox = this.randomNumber()
+		let moveToBox = Game.randomNumber()
 
 		while (this.currentPosition === moveToBox) {
-			moveToBox = this.randomNumber()
+			moveToBox = Game.randomNumber()
 		}
 
 		boxes.forEach(el => {
